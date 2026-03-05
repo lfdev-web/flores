@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>Feliz Cumpleaños, Carolina ✨</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Pinyon+Script&display=swap');
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+
+html,body{height:100%;overflow-x:hidden;}
+
+body{
+  min-height:100%;
+  background:radial-gradient(ellipse at 30% 0%,#ffe0e6 0%,#fdf0f0 40%,#fce8e0 70%,#fdf6f0 100%);
+  font-family:'Cormorant Garamond',Georgia,serif;
+  display:flex;flex-direction:column;align-items:center;
+  padding-bottom:40px;
+  position:relative;
+}
+
+body::before,body::after{
+  content:'';position:fixed;border-radius:50%;pointer-events:none;z-index:0;
+}
+body::before{
+  width:60vw;height:60vw;max-width:400px;max-height:400px;
+  background:radial-gradient(circle,rgba(255,182,193,0.18) 0%,transparent 70%);
+  top:-10%;left:-10%;
+}
+body::after{
+  width:50vw;height:50vw;max-width:350px;max-height:350px;
+  background:radial-gradient(circle,rgba(255,200,160,0.14) 0%,transparent 70%);
+  bottom:5%;right:-8%;
+}
+
+/* PETALS RAIN */
+#petals-rain{
+  position:fixed;inset:0;pointer-events:none;z-index:1;
+  opacity:0;transition:opacity 1s;
+}
+#petals-rain.on{opacity:1;}
+
+/* SCENE */
+#scene{
+  position:relative;z-index:2;
+  width:100%;
+  display:flex;flex-direction:column;align-items:center;
+}
+
+/* BUTTON screen */
+#btn-wrap{
+  display:flex;align-items:center;justify-content:center;
+  min-height:100svh;width:100%;
+}
+
+#open-btn{
+  background:linear-gradient(145deg,#c0392b,#922b21);
+  color:#fff;border:none;
+  padding:16px 44px;
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(1.05rem,4.5vw,1.35rem);
+  font-weight:300;letter-spacing:0.13em;
+  border-radius:60px;cursor:pointer;
+  box-shadow:0 6px 28px rgba(192,57,43,0.38),inset 0 1px 0 rgba(255,255,255,0.18);
+  position:relative;overflow:hidden;
+  transition:transform .3s,box-shadow .3s;
+  -webkit-tap-highlight-color:transparent;
+}
+#open-btn::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.22),transparent);
+  transform:translateX(-100%);transition:transform .55s ease;
+}
+#open-btn:hover::after,#open-btn:focus::after{transform:translateX(100%);}
+#open-btn:hover{transform:translateY(-3px);box-shadow:0 12px 36px rgba(192,57,43,0.45);}
+#open-btn:active{transform:scale(0.97);}
+#open-btn.out{animation:btnOut .5s forwards;}
+@keyframes btnOut{to{opacity:0;transform:scale(0.75) translateY(30px);}}
+
+/* BOUQUET */
+#bouquet-wrap{display:none;flex-direction:column;align-items:center;width:100%;gap:0;}
+#bouquet-wrap.on{display:flex;}
+
+#bouquet-svg{
+  width:min(94vw,390px);
+  height:auto;overflow:visible;
+  filter:drop-shadow(0 18px 50px rgba(180,40,40,0.18));
+  margin-top:max(env(safe-area-inset-top,0px),16px);
+}
+
+/* MESSAGE */
+#msg{
+  max-width:min(500px,88vw);
+  background:rgba(255,255,255,0.62);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border:1px solid rgba(192,57,43,0.1);
+  border-radius:22px;
+  padding:clamp(22px,6vw,36px) clamp(20px,6vw,36px);
+  text-align:center;
+  box-shadow:0 8px 40px rgba(192,57,43,0.09),inset 0 1px 0 rgba(255,255,255,0.9);
+  opacity:0;transform:translateY(28px);
+  transition:opacity 1.2s ease,transform 1.2s cubic-bezier(.23,1,.32,1);
+  margin:16px 16px 0;
+}
+#msg.on{opacity:1;transform:translateY(0);}
+
+.msg-title{
+  font-family:'Pinyon Script',cursive;
+  font-size:clamp(1.7rem,6.5vw,2.3rem);
+  color:#8b1a1a;line-height:1.25;margin-bottom:14px;
+}
+.divider{
+  width:52px;height:1px;
+  background:linear-gradient(90deg,transparent,#d4a574,transparent);
+  margin:14px auto;
+}
+.msg-body{
+  font-size:clamp(.93rem,3.8vw,1.12rem);
+  font-weight:300;font-style:italic;
+  color:#5a2e2e;line-height:1.92;letter-spacing:.01em;
+}
+
+/* SVG element animations */
+.stem-path{stroke-dasharray:600;stroke-dashoffset:600;}
+.stem-path.grow{animation:drawStem .85s cubic-bezier(.4,0,.2,1) forwards;}
+@keyframes drawStem{to{stroke-dashoffset:0;}}
+
+.leaf-g{opacity:0;}
+.leaf-g.show{animation:leafPop .55s cubic-bezier(.34,1.56,.64,1) forwards;}
+@keyframes leafPop{from{opacity:0;transform:scale(0) rotate(-15deg);}to{opacity:1;transform:scale(1) rotate(0);}}
+
+.rose-g{opacity:0;}
+.rose-g.bloom{animation:rosePop .9s cubic-bezier(.34,1.1,.64,1) forwards;}
+@keyframes rosePop{
+  0%  {opacity:0;transform:scale(.1) rotate(-12deg);}
+  65% {transform:scale(1.08) rotate(2deg);}
+  100%{opacity:1;transform:scale(1) rotate(0);}
+}
+
+.ribbon-g{opacity:0;}
+.ribbon-g.show{animation:fadeUp .7s ease forwards;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+
+/* Falling petals */
+.fp{position:absolute;animation:fpFall linear infinite;will-change:transform;}
+@keyframes fpFall{
+  0%  {transform:translateY(0) rotate(0) scale(1);opacity:0;}
+  6%  {opacity:.8;}92%{opacity:.55;}
+  100%{transform:translateY(108vh) rotate(660deg) scale(.65);opacity:0;}
+}
+</style>
+</head>
+<body>
+<div id="petals-rain"></div>
+<div id="scene">
+  <div id="btn-wrap">
+    <button id="open-btn">Abrir detalle ✨</button>
+  </div>
+  <div id="bouquet-wrap">
+    <svg id="bouquet-svg" viewBox="0 0 320 440" xmlns="http://www.w3.org/2000/svg"></svg>
+    <div id="msg">
+      <p class="msg-title">Feliz cumpleaños, Carolina ✨</p>
+      <div class="divider"></div>
+      <p class="msg-body">
+        Hoy cumple años una personita muy especial.<br><br>
+        Que este nuevo año te regale muchos momentos bonitos, sonrisas sinceras y sueños que encuentren su camino.<br><br>
+        Este pequeño detalle es solo una forma de desearte un día muy bonito.
+      </p>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+"use strict";
+const NS="http://www.w3.org/2000/svg";
+const svg=document.getElementById("bouquet-svg");
+
+/* ── helpers ── */
+function el(tag,attrs,parent){
+  const e=document.createElementNS(NS,tag);
+  if(attrs) for(const[k,v] of Object.entries(attrs)) e.setAttribute(k,v);
+  if(parent) parent.appendChild(e);
+  return e;
+}
+function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
+
+/* ── DEFS ── */
+const defs=el("defs",{},svg);
+
+function radial(id,stops,cx="40%",cy="35%",r="65%"){
+  const g=el("radialGradient",{id,cx,cy,r},defs);
+  stops.forEach(([off,col])=>{
+    const s=el("stop",{},g);
+    s.setAttribute("offset",off);
+    s.setAttribute("stop-color",col);
+  });
+}
+
+radial("pg1",[["0%","#f5a8a8"],["40%","#c0392b"],["100%","#7b241c"]]);
+radial("pg2",[["0%","#e74c3c"],["50%","#b03a2e"],["100%","#641e16"]]);
+radial("pg3",[["0%","#fbc0c0"],["38%","#c0392b"],["100%","#8b1a1a"]]);
+radial("pg4",[["0%","#d0403a"],["52%","#922b21"],["100%","#5a1a1a"]]);
+
+function linear(id,stops,x1,y1,x2,y2){
+  const g=el("linearGradient",{id,x1:x1||"0%",y1:y1||"0%",x2:x2||"0%",y2:y2||"100%"},defs);
+  stops.forEach(([off,col])=>{
+    const s=el("stop",{},g);
+    s.setAttribute("offset",off);
+    s.setAttribute("stop-color",col);
+  });
+}
+linear("stemG",[["0%","#1a5c32"],["50%","#2ecc71"],["100%","#1e8449"]],"0%","0%","100%","0%");
+linear("lg1",[["0%","#58d68d"],["100%","#1e8449"]]);
+linear("lg2",[["0%","#2ecc71"],["100%","#145a32"]]);
+linear("ribG",[["0%","#ffc8c8"],["100%","#e8a0a0"]]);
+
+// shadow filter for roses
+const fRose=el("filter",{id:"frose",x:"-30%",y:"-30%",width:"160%",height:"160%"},defs);
+el("feDropShadow",{dx:"0",dy:"4",stdDeviation:"6","flood-color":"rgba(100,10,10,0.22)"},fRose);
+
+const fLeaf=el("filter",{id:"fleaf"},defs);
+el("feDropShadow",{dx:"1",dy:"2",stdDeviation:"2","flood-color":"rgba(0,70,0,0.2)"},fLeaf);
+
+/* ════════════════════════════════════════
+   ROSE BUILDER
+   Each petal = smooth bezier teardrop
+   pointing outward from centre
+════════════════════════════════════════ */
+/**
+ * Draws a single petal.
+ * origin = centre of rose.
+ * length = petal length from centre.
+ * width  = half-width at widest point.
+ * angle  = rotation in degrees.
+ * grad   = gradient id.
+ */
+function petal(parent,ox,oy,length,width,angle,grad){
+  // Petal drawn pointing UP in local space, then rotated.
+  // Base point just below centre, tip at (0,-length).
+  const base=length*0.15;
+  const cpx=width*1.08;
+  const cpy1=-length*0.28;
+  const cpy2=-length*0.7;
+  const d=`M 0,${base} C ${-cpx},${cpy1} ${-cpx*.75},${cpy2} 0,${-length} C ${cpx*.75},${cpy2} ${cpx},${cpy1} 0,${base} Z`;
+  return el("path",{
+    d,
+    fill:`url(#${grad})`,
+    transform:`translate(${ox},${oy}) rotate(${angle})`
+  },parent);
+}
+
+function drawRose(parent,ox,oy,R,grads){
+  const g=el("g",{"class":"rose-g"},parent);
+  g.style.transformOrigin=`${ox}px ${oy}px`;
+
+  // ── sepals (green tips behind petals) ──
+  for(let i=0;i<5;i++){
+    const ang=i*72-18;
+    const sl=R*0.38, sw=R*0.09;
+    petal(g,ox,oy,sl,sw,ang,"lg1");
+  }
+
+  // ── outer ring – 6 petals ──
+  const og=[grads[0],grads[1],grads[0],grads[1],grads[0],grads[1]];
+  for(let i=0;i<6;i++) petal(g,ox,oy,R,R*0.42,i*60,og[i]);
+
+  // ── mid ring – 5 petals ──
+  for(let i=0;i<5;i++) petal(g,ox,oy,R*.66,R*.38,i*72+36,grads[i%2+1]);
+
+  // ── inner ring – 4 petals ──
+  for(let i=0;i<4;i++) petal(g,ox,oy,R*.40,R*.32,i*90+22,grads[3]);
+
+  // ── innermost curl – 3 petals ──
+  for(let i=0;i<3;i++) petal(g,ox,oy,R*.22,R*.20,i*120+10,grads[2]);
+
+  // ── centre dots ──
+  el("circle",{cx:ox,cy:oy,r:R*.12,fill:"#7b241c"},g);
+  el("circle",{cx:ox,cy:oy,r:R*.07,fill:"#4a1010"},g);
+
+  // ── specular highlight ──
+  el("ellipse",{
+    cx:ox-R*.22,cy:oy-R*.32,
+    rx:R*.14,ry:R*.08,
+    fill:"rgba(255,210,210,0.30)",
+    transform:`rotate(-35,${ox-R*.22},${oy-R*.32})`
+  },g);
+
+  g.setAttribute("filter","url(#frose)");
+  return g;
+}
+
+/* ════════════════════════════════════════
+   BUILD LAYERS
+════════════════════════════════════════ */
+const stemLyr  =el("g",{id:"stems"},svg);
+const leafLyr  =el("g",{id:"leaves"},svg);
+const roseLyr  =el("g",{id:"roses"},svg);
+const ribbonLyr=el("g",{id:"ribbon"},svg);
+
+/* ── 5 ROSES: positions & sizes ──
+   viewBox 320×440
+   Roses fan at the top portion (cy 72-148)
+*/
+const ROSES=[
+  {cx:160,cy: 72, R:50, grads:["pg1","pg2","pg3","pg4"]},
+  {cx:108,cy: 98, R:44, grads:["pg2","pg1","pg4","pg3"]},
+  {cx:212,cy: 95, R:44, grads:["pg3","pg2","pg1","pg4"]},
+  {cx: 60,cy:130, R:38, grads:["pg1","pg3","pg2","pg4"]},
+  {cx:260,cy:127, R:38, grads:["pg4","pg1","pg3","pg2"]},
+];
+
+/* Stem bottom converges near ribbon at ~y=375 */
+const STEM_TOPS=[[160,120],[108,140],[212,137],[60,164],[260,161]];
+const STEM_BOTS=[[160,372],[150,370],[170,372],[140,368],[180,370]];
+
+/* ── STEMS ── */
+const stemEls=STEM_TOPS.map((top,i)=>{
+  const [tx,ty]=top;
+  const [bx,by]=STEM_BOTS[i];
+  const mx=(tx+bx)/2+(i%2===0?4:-4);
+  const my=(ty+by)/2;
+  const w=i===0?"5.2":i<3?"4.5":"3.8";
+  const p=el("path",{
+    d:`M ${tx},${ty} Q ${mx},${my} ${bx},${by}`,
+    fill:"none",stroke:"url(#stemG)",
+    "stroke-width":w,"stroke-linecap":"round",
+    "class":"stem-path"
+  },stemLyr);
+  return p;
+});
+
+/* ── LEAVES ── */
+function leaf(lx,ly,len,wid,rot,grad){
+  const g=el("g",{"class":"leaf-g"},leafLyr);
+  g.style.transformOrigin=`${lx}px ${ly}px`;
+  // leaf shape: bezier teardrop
+  const d=`M ${lx},${ly} C ${lx-wid},${ly-len*.4} ${lx-wid*.5},${ly-len*.85} ${lx},${ly-len} C ${lx+wid*.1},${ly-len*.85} ${lx+wid*.1},${ly-len*.3} ${lx},${ly} Z`;
+  el("path",{d,fill:`url(#${grad})`,transform:`rotate(${rot},${lx},${ly})`,filter:"url(#fleaf)"},g);
+  el("path",{
+    d:`M ${lx},${ly} C ${lx-wid*.3},${ly-len*.5} ${lx},${ly-len*.82} ${lx},${ly-len}`,
+    fill:"none",stroke:"#145a32","stroke-width":"0.7","stroke-opacity":"0.55",
+    transform:`rotate(${rot},${lx},${ly})`
+  },g);
+  return g;
+}
+
+const leafEls=[
+  leaf(138,225,40,17,-30,"lg1"),
+  leaf(182,232,37,15, 30,"lg2"),
+  leaf(108,260,33,14,-25,"lg1"),
+  leaf(214,256,31,13, 26,"lg2"),
+  leaf( 82,295,29,12,-20,"lg1"),
+  leaf(240,290,29,12, 21,"lg2"),
+  leaf(148,322,25,11,-15,"lg1"),
+  leaf(174,325,25,11, 16,"lg2"),
+];
+
+/* ── ROSES ── */
+const roseEls=ROSES.map(({cx,cy,R,grads})=>drawRose(roseLyr,cx,cy,R,grads));
+
+/* ── RIBBON / BOW ── */
+(function(){
+  const g=el("g",{"class":"ribbon-g"},ribbonLyr);
+  // wrapping strip
+  el("path",{d:"M 110,368 Q 160,356 210,368 Q 202,392 160,390 Q 118,392 110,368 Z",fill:"url(#ribG)",stroke:"#d4a0a0","stroke-width":"0.8"},g);
+  // left loop
+  el("path",{d:"M 145,364 C 118,346 96,352 102,364 C 108,376 130,372 145,364 Z",fill:"#ffc8c8",stroke:"#d4a0a0","stroke-width":"0.7"},g);
+  // right loop
+  el("path",{d:"M 175,364 C 202,346 224,352 218,364 C 212,376 190,372 175,364 Z",fill:"#ffbaba",stroke:"#d4a0a0","stroke-width":"0.7"},g);
+  // knot
+  el("ellipse",{cx:"160",cy:"364",rx:"10",ry:"8",fill:"#f5b7b1",stroke:"#d4a0a0","stroke-width":"0.7"},g);
+  // tails
+  el("path",{d:"M 147,368 C 138,396 130,414 134,428",fill:"none",stroke:"#ffc8c8","stroke-width":"5","stroke-linecap":"round"},g);
+  el("path",{d:"M 173,368 C 182,396 190,414 186,428",fill:"none",stroke:"#ffbaba","stroke-width":"5","stroke-linecap":"round"},g);
+  return g;
+})();
+const ribbonEl=ribbonLyr.querySelector(".ribbon-g");
+
+/* ════════════════════════════════════════
+   FALLING PETALS
+════════════════════════════════════════ */
+const rainEl=document.getElementById("petals-rain");
+const PCOLORS=["#f1948a","#e74c3c","#c0392b","#f5b7b1","#f9c3c3","#df8080"];
+function mkPetal(col){
+  return `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 34' width='20' height='28'><path d='M12,30 C0,20 -2,4 12,2 C26,4 24,20 12,30Z' fill='${col}' opacity='0.82'/></svg>`;
+}
+function spawnPetals(){
+  rainEl.classList.add("on");
+  for(let i=0;i<30;i++){
+    const d=document.createElement("div");
+    d.className="fp";
+    const col=PCOLORS[Math.floor(Math.random()*PCOLORS.length)];
+    d.innerHTML=mkPetal(col);
+    const dur=5+Math.random()*9;
+    d.style.cssText=`left:${Math.random()*102}%;top:-60px;animation-duration:${dur}s;animation-delay:${Math.random()*5}s;transform:scale(${0.4+Math.random()*.9}) rotate(${Math.random()*360}deg);`;
+    rainEl.appendChild(d);
+  }
+}
+
+/* ════════════════════════════════════════
+   ANIMATION SEQUENCE
+════════════════════════════════════════ */
+const btnWrap =document.getElementById("btn-wrap");
+const bouqWrap=document.getElementById("bouquet-wrap");
+const msgEl   =document.getElementById("msg");
+const btn     =document.getElementById("open-btn");
+
+async function run(){
+  bouqWrap.classList.add("on");
+  await sleep(100);
+  // stems
+  for(let i=0;i<stemEls.length;i++){stemEls[i].classList.add("grow");await sleep(160);}
+  await sleep(480);
+  // leaves
+  for(let i=0;i<leafEls.length;i++){leafEls[i].classList.add("show");await sleep(110);}
+  await sleep(350);
+  // roses
+  for(const e of roseEls){e.classList.add("bloom");await sleep(370);}
+  await sleep(420);
+  // ribbon
+  if(ribbonEl) ribbonEl.classList.add("show");
+  await sleep(330);
+  // petals
+  spawnPetals();
+  await sleep(500);
+  // message
+  msgEl.classList.add("on");
+}
+
+btn.addEventListener("click",()=>{
+  btn.classList.add("out");
+  setTimeout(()=>{
+    btnWrap.style.display="none";
+    run();
+  },460);
+},{once:true});
+
+})();
+</script>
+</body>
+</html>
